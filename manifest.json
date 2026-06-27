@@ -1,0 +1,22 @@
+{
+  "name": "PureGrain Mills",
+  "short_name": "PureGrain",
+  "description": "Mill से दिल तक - Fresh grains delivered to your doorstep",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22c55e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://media.base44.com/images/public/69e9c287a13e0c4fb7be151d/5e2e6ae4e_image.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69e9c287a13e0c4fb7be151d/5e2e6ae4e_image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
