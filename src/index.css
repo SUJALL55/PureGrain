@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-serif: 'Instrument Serif', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+
+    --background: 40 33% 97%;
+    --foreground: 150 30% 15%;
+    --card: 40 33% 97%;
+    --card-foreground: 150 30% 15%;
+    --popover: 40 33% 97%;
+    --popover-foreground: 150 30% 15%;
+    --primary: 150 30% 15%;
+    --primary-foreground: 40 33% 97%;
+    --secondary: 200 15% 85%;
+    --secondary-foreground: 150 30% 15%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 150 10% 40%;
+    --accent: 30 74% 63%;
+    --accent-foreground: 150 30% 15%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 30 74% 63%;
+    --chart-1: 30 74% 63%;
+    --chart-2: 150 30% 30%;
+    --chart-3: 200 15% 50%;
+    --chart-4: 40 60% 70%;
+    --chart-5: 15 80% 60%;
+    --radius: 0.75rem;
+    --sidebar-background: 40 33% 95%;
+    --sidebar-foreground: 150 30% 15%;
+    --sidebar-primary: 150 30% 15%;
+    --sidebar-primary-foreground: 40 33% 97%;
+    --sidebar-accent: 40 20% 92%;
+    --sidebar-accent-foreground: 150 30% 15%;
+    --sidebar-border: 40 15% 85%;
+    --sidebar-ring: 30 74% 63%;
+  }
+
+  .dark {
+    --background: 150 20% 8%;
+    --foreground: 40 33% 95%;
+    --card: 150 20% 10%;
+    --card-foreground: 40 33% 95%;
+    --popover: 150 20% 10%;
+    --popover-foreground: 40 33% 95%;
+    --primary: 40 33% 95%;
+    --primary-foreground: 150 20% 8%;
+    --secondary: 150 15% 18%;
+    --secondary-foreground: 40 33% 95%;
+    --muted: 150 15% 18%;
+    --muted-foreground: 40 10% 60%;
+    --accent: 30 74% 63%;
+    --accent-foreground: 150 20% 8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 18%;
+    --input: 150 15% 18%;
+    --ring: 30 74% 63%;
+    --chart-1: 30 74% 63%;
+    --chart-2: 150 30% 50%;
+    --chart-3: 200 15% 60%;
+    --chart-4: 40 60% 70%;
+    --chart-5: 15 80% 60%;
+    --sidebar-background: 150 20% 10%;
+    --sidebar-foreground: 40 33% 95%;
+    --sidebar-primary: 30 74% 63%;
+    --sidebar-primary-foreground: 150 20% 8%;
+    --sidebar-accent: 150 15% 15%;
+    --sidebar-accent-foreground: 40 33% 95%;
+    --sidebar-border: 150 15% 18%;
+    --sidebar-ring: 30 74% 63%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
+    min-height: 100dvh;
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  :where(img, video, iframe) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  :where(button, a, input, select, textarea) {
+    @apply outline-offset-4;
+  }
+
+  :where(button, [role='button']) {
+    touch-action: manipulation;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}

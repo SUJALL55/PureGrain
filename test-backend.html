@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Backend Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2874F0;
+            margin-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #2874F0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1e5fc4;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #dee2e6;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Razorpay Backend Test</h1>
+        <p>Use this page to test if your backend server is running and accessible</p>
+
+        <h2>Step 1: Test Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend (http://localhost:3001)</button>
+        <div id="backendStatus"></div>
+
+        <h2>Step 2: Test Create Order API</h2>
+        <button onclick="testCreateOrder()">Test Create Order API</button>
+        <div id="orderStatus"></div>
+
+        <h2>Step 3: Full Payment Test</h2>
+        <button onclick="testFullPayment()">Simulate Full Payment Flow</button>
+        <div id="paymentStatus"></div>
+
+        <h2>✅ Checklist</h2>
+        <ul class="checklist" id="checklist">
+            <li>⏳ Backend server running on port 3001</li>
+            <li>⏳ Backend API accessible</li>
+            <li>⏳ Create order endpoint working</li>
+            <li>⏳ CORS enabled</li>
+            <li>⏳ Razorpay keys configured</li>
+        </ul>
+
+        <h2>📝 Console Logs</h2>
+        <pre id="consoleLogs">Waiting for tests...</pre>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3001';
+        let logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${message}`);
+            document.getElementById('consoleLogs').textContent = logs.join('\n\n');
+            console.log(message);
+        }
+
+        function updateChecklist(index, status, message) {
+            const items = document.getElementById('checklist').children;
+            const icon = status === 'pass' ? '✅' : status === 'fail' ? '❌' : '⏳';
+            items[index].innerHTML = `${icon} ${message}`;
+            items[index].style.color = status === 'pass' ? '#155724' : status === 'fail' ? '#721c24' : '#856404';
+        }
+
+        async function testBackend() {
+            log('Testing backend connection...');
+            const statusDiv = document.getElementById('backendStatus');
+            statusDiv.innerHTML = '<div class="info">Testing connection to backend...</div>';
+
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                log(`Backend responded with status: ${response.status}`);
+                
+                if (response.ok || response.status === 404) {
+                    statusDiv.innerHTML = '<div class="success">✅ Backend is RUNNING and accessible!</div>';
+                    updateChecklist(0, 'pass', 'Backend server running on port 3001');
+                    updateChecklist(1, 'pass', 'Backend API accessible');
+                } else {
+                    statusDiv.innerHTML = `<div class="error">❌ Backend responded with status: ${response.status}</div>`;
+                    updateChecklist(0, 'fail', 'Backend server NOT running');
+                }
+            } catch (error) {
+                log(`Backend connection failed: ${error.message}`);
+                statusDiv.innerHTML = `
+                    <div class="error">❌ Backend is NOT running or not accessible</div>
+                    <div class="warning">
+                        <strong>Error:</strong> ${error.message}<br><br>
+                        <strong>Fix:</strong> Start your backend server:<br>
+                        <code>node server.js</code>
+                    </div>
+                `;
+                updateChecklist(0, 'fail', 'Backend server NOT running');
+                updateChecklist(1, 'fail', 'Backend API NOT accessible');
+            }
+        }
+
+        async function testCreateOrder() {
+            log('Testing create order API...');
+            const statusDiv = document.getElementById('orderStatus');
+            statusDiv.innerHTML = '<div class="info">Testing create order endpoint...</div>';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/create-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify({
+                        amount: 9900, // ₹99 in paise
+                        currency: 'INR',
+                        receipt: 'test_receipt_' + Date.now()
+                    })
+                });
+
+                const data = await response.json();
+                log(`Create order response: ${JSON.stringify(data, null, 2)}`);
+
+                if (response.ok && data.success) {
+                    statusDiv.innerHTML = `
+                        <div class="success">✅ Create Order API is WORKING!</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    updateChecklist(2, 'pass', 'Create order endpoint working');
+                    updateChecklist(3, 'pass', 'CORS enabled');
+                    updateChecklist(4, 'pass', 'Razorpay keys configured');
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="error">❌ Create Order API failed</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <div class="warning">
+                            ${data.message || 'Check backend console for errors'}
+                        </div>
+                    `;
+                    updateChecklist(2, 'fail', 'Create order endpoint failed');
+                    if (data.message && data.message.includes('key')) {
+                        updateChecklist(4, 'fail', 'Razorpay keys NOT configured');
+                    }
+                }
+            } catch (error) {
+                log(`Create order failed: ${error.message}`);
+                statusDiv.innerHTML = `
+                    <div class="error">❌ Failed to call create order API</div>
+                    <div class="warning">
+                        <strong>Error:</strong> ${error.message}<br><br>
+                        <strong>Possible causes:</strong><br>
+                        1. Backend not running<br>
+                        2. CORS not enabled<br>
+                        3. Wrong URL<br><br>
+                        <strong>Fix:</strong><br>
+                        1. Run: <code>node server.js</code><br>
+                        2. Check server.js has: <code>app.use(cors())</code>
+                    </div>
+                `;
+                updateChecklist(2, 'fail', 'Create order endpoint failed');
+                updateChecklist(3, 'fail', 'CORS NOT enabled or backend not running');
+            }
+        }
+
+        async function testFullPayment() {
+            log('Starting full payment flow test...');
+            const statusDiv = document.getElementById('paymentStatus');
+            statusDiv.innerHTML = '<div class="info">Simulating payment flow...</div>';
+
+            try {
+                // Step 1: Create order
+                log('Step 1: Creating order...');
+                const orderResponse = await fetch(`${BACKEND_URL}/api/create-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    body: JSON.stringify({
+                        amount: 9900,
+                        currency: 'INR',
+                        receipt: 'test_' + Date.now()
+                    })
+                });
+
+                const orderData = await orderResponse.json();
+
+                if (!orderData.success) {
+                    throw new Error('Order creation failed: ' + (orderData.message || 'Unknown error'));
+                }
+
+                log(`Step 1 complete: Order created - ${orderData.orderId}`);
+
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Full payment flow test PASSED!<br><br>
+                        Order created successfully: ${orderData.orderId}<br>
+                        Amount: ₹${orderData.amount / 100}<br><br>
+                        Your backend is ready for Razorpay integration!
+                    </div>
+                `;
+
+            } catch (error) {
+                log(`Payment flow test failed: ${error.message}`);
+                statusDiv.innerHTML = `
+                    <div class="error">❌ Payment flow test failed</div>
+                    <div class="warning">
+                        <strong>Error:</strong> ${error.message}<br><br>
+                        Check the console logs below for details.
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run backend test on page load
+        window.addEventListener('load', () => {
+            log('Page loaded. Click buttons to test backend.');
+            log(`Backend URL: ${BACKEND_URL}`);
+        });
+    </script>
+</body>
+</html>
